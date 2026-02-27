@@ -1,59 +1,10 @@
-resource "aws_vpc" "dev-vpc" {
+resource "aws_vpc" "main" {
   cidr_block = var.vpc_cidr
   enable_dns_hostnames = true
   enable_dns_support   = true
   tags = {
-    Name = "${var.environment}-dev-vpc"
+    Name = "${var.environment}-main-vpc"
   }
-}
-
-resource "aws_subnet" "dev-public-1-subnet" {
-  vpc_id            = aws_vpc.dev-vpc.id
-  cidr_block        = "10.0.1.0/24"
-  availability_zone = "${var.aws_region}a"
-  map_public_ip_on_launch = true
-  tags = {
-    Name                                            = "${var.cluster_name}-dev-public-1-subnet"
-    "kubernetes.io/cluster/${var.cluster_name}"     = "shared"
-    "kubernetes.io/role/elb"                        = "1"
-  }  
-}
-
-resource "aws_subnet" "dev-public-2-subnet" {
-  vpc_id            = aws_vpc.dev-vpc.id
-  cidr_block        = "10.0.2.0/24"
-  availability_zone = "${var.aws_region}b"
-  map_public_ip_on_launch = true
-    tags = {
-    Name                                            = "${var.cluster_name}-dev-public-2-subnet"
-    "kubernetes.io/cluster/${var.cluster_name}"     = "shared"
-    "kubernetes.io/role/elb"                        = "1"
-  }  
-  
-}
-
-resource "aws_subnet" "dev-private-1-subnet" {
-  vpc_id            = aws_vpc.dev-vpc.id
-  cidr_block        = "10.0.3.0/24"
-  availability_zone = "${var.aws_region}a"
-  map_public_ip_on_launch = false
-    tags = {
-    Name                                            = "${var.cluster_name}-dev-private-1-subnet"
-    "kubernetes.io/cluster/${var.cluster_name}"     = "shared"
-    "kubernetes.io/role/internal-elb"               = "1"
-  }  
-}
-
-resource "aws_subnet" "dev-private-2-subnet" {
-  vpc_id            = aws_vpc.dev-vpc.id
-  cidr_block        = "10.0.4.0/24"
-  availability_zone = "${var.aws_region}b"
-  map_public_ip_on_launch = false
-    tags = {
-    Name                                            = "${var.cluster_name}-dev-private-2-subnet"
-    "kubernetes.io/cluster/${var.cluster_name}"     = "shared"
-    "kubernetes.io/role/internal-elb"               = "1"
-  }  
 }
 
 resource "aws_subnet" "public_1" {
@@ -106,7 +57,7 @@ resource "aws_subnet" "private_2" {
   }
 }
 
-resource "aws_internet_gateway" "dev-igw" {
+resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
 
   tags = {

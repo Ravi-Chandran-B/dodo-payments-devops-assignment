@@ -106,7 +106,7 @@ resource "aws_eks_node_group" "main" {
     aws_subnet.private_2.id
   ]
 
-  instance_types = ["t2.micro"]
+  instance_types = ["t3.micro"]
 
   scaling_config {
     desired_size = 1
@@ -118,7 +118,7 @@ resource "aws_eks_node_group" "main" {
     max_unavailable = 1
   }
 
-  disk_size = 10
+  disk_size = 20
 
   labels = {
     Environment = var.environment

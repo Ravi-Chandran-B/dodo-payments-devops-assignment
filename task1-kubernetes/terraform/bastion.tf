@@ -37,7 +37,7 @@ resource "aws_security_group" "bastion" {
 
 resource "aws_instance" "bastion" {
   ami                         = "ami-0c02fb55956c7d316" # Amazon Linux 2 us-east-1
-  instance_type               = "t2.micro"              # FREE TIER!
+  instance_type               = "t3.micro"              # FREE TIER eligible
   subnet_id                   = aws_subnet.public_1.id
   vpc_security_group_ids      = [aws_security_group.bastion.id]
   key_name                    = aws_key_pair.bastion.key_name

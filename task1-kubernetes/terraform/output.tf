@@ -58,3 +58,13 @@ output "kubectl_config_command" {
   description = "Command to configure kubectl"
   value       = "aws eks update-kubeconfig --region ${var.aws_region} --name ${var.cluster_name}"
 }
+
+output "bastion_public_ip" {
+  description = "Bastion host public IP"
+  value       = aws_instance.bastion.public_ip
+}
+
+output "bastion_ssh_command" {
+  description = "SSH command to connect to bastion"
+  value       = "ssh -i ~/.ssh/id_rsa ec2-user@${aws_instance.bastion.public_ip}"
+}
