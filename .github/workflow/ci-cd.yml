@@ -1,0 +1,201 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
+  CLUSTER_NAME: infra-eks
+
+jobs:
+
+  lint-and-test:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install backend dependencies
+        working-directory: task1-kubernetes/app/backend
+        run: npm install
+
+      - name: Run backend tests
+        working-directory: task1-kubernetes/app/backend
+        run: npm test
+
+      - name: Install frontend dependencies
+        working-directory: task1-kubernetes/app/frontend
+        run: npm install
+
+      - name: Run frontend tests
+        working-directory: task1-kubernetes/app/frontend
+        run: npm test -- --passWithNoTests
+
+      - name: Lint Kubernetes manifests
+        run: |
+          pip install yamllint
+          yamllint task1-kubernetes/manifests/ || true
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run Trivy scan on backend
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: 'task1-kubernetes/app/backend'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '0'
+
+      - name: Run Trivy scan on frontend
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: 'task1-kubernetes/app/frontend'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '0'
+
+  build-and-push:
+    name: Build and Push Docker Images
+    runs-on: ubuntu-latest
+    needs: security-scan
+    if: github.ref == 'refs/heads/main'
+
+    outputs:
+      image_tag: ${{ steps.vars.outputs.sha_short }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set image tag
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and push backend image
+        working-directory: task1-kubernetes/app/backend
+        run: |
+          docker build \
+            -t $ECR_REGISTRY/infra-eks-dev-backend:${{ steps.vars.outputs.sha_short }} \
+            -t $ECR_REGISTRY/infra-eks-dev-backend:latest .
+          docker push $ECR_REGISTRY/infra-eks-dev-backend:${{ steps.vars.outputs.sha_short }}
+          docker push $ECR_REGISTRY/infra-eks-dev-backend:latest
+
+      - name: Build and push frontend image
+        working-directory: task1-kubernetes/app/frontend
+        run: |
+          docker build \
+            -t $ECR_REGISTRY/infra-eks-dev-frontend:${{ steps.vars.outputs.sha_short }} \
+            -t $ECR_REGISTRY/infra-eks-dev-frontend:latest .
+          docker push $ECR_REGISTRY/infra-eks-dev-frontend:${{ steps.vars.outputs.sha_short }}
+          docker push $ECR_REGISTRY/infra-eks-dev-frontend:latest
+
+      - name: Scan backend image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.ECR_REGISTRY }}/infra-eks-dev-backend:latest
+          severity: 'CRITICAL,HIGH'
+          exit-code: '0'
+
+      - name: Scan frontend image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.ECR_REGISTRY }}/infra-eks-dev-frontend:latest
+          severity: 'CRITICAL,HIGH'
+          exit-code: '0'
+
+  deploy:
+    name: Deploy to Kubernetes
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            ${{ env.AWS_REGION }}
+
+      - name: Configure kubectl
+        run: |
+          aws eks update-kubeconfig \
+            --region ${{ env.AWS_REGION }} \
+            --name ${{ env.CLUSTER_NAME }}
+
+      - name: Create Kubernetes secret
+        run: |
+          kubectl create secret generic app-secret \
+            --namespace dodo-payments \
+            --from-literal=DB_USER=${{ secrets.DB_USER }} \
+            --from-literal=DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            --from-literal=POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
+            --from-literal=POSTGRES_USER=${{ secrets.DB_USER }} \
+            --from-literal=POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Deploy manifests
+        run: |
+          kubectl apply -f task1-kubernetes/manifests/namespace.yaml
+          kubectl apply -f task1-kubernetes/manifests/configmap.yaml
+          kubectl apply -f task1-kubernetes/manifests/postgres.yaml
+          kubectl apply -f task1-kubernetes/manifests/backend.yaml
+          kubectl apply -f task1-kubernetes/manifests/frontend.yaml
+          kubectl apply -f task1-kubernetes/manifests/ingress.yaml
+          kubectl apply -f task1-kubernetes/manifests/hpa.yaml
+
+      - name: Wait for rollout
+        run: |
+          kubectl rollout status deployment/backend \
+            -n dodo-payments --timeout=120s
+          kubectl rollout status deployment/frontend \
+            -n dodo-payments --timeout=120s
+
+
+      - name: Rollback on failure
+        if: failure()
+        run: |
+          echo "Deployment failed! Rolling back..."
+          kubectl rollout undo deployment/backend -n dodo-payments || true
+          kubectl rollout undo deployment/frontend -n dodo-payments || true
+          echo "Rollback completed!"
+
+      - name: Verify deployment
+        run: |
+          kubectl get pods -n dodo-payments
+          kubectl get svc -n dodo-payments
