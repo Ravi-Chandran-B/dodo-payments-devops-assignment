@@ -1,0 +1,78 @@
+prometheus:
+  prometheusSpec:
+    scrapeInterval: 30s
+    evaluationInterval: 30s
+
+    retention: 7d
+
+    resources:
+      requests:
+        memory: "400Mi"
+        cpu: "200m"
+      limits:
+        memory: "800Mi"
+        cpu: "500m"
+
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+
+    additionalScrapeConfigs:
+      - job_name: 'dodo-backend'
+        static_configs:
+          - targets: ['backend-service.dodo-payments.svc.cluster.local:3000']
+        metrics_path: '/metrics'
+        scrape_interval: 15s
+
+      - job_name: 'dodo-frontend'
+        static_configs:
+          - targets: ['frontend-service.dodo-payments.svc.cluster.local:80']
+        scrape_interval: 15s
+
+grafana:
+  enabled: true
+
+  adminUser: admin
+  adminPassword: admin123
+
+  service:
+    type: LoadBalancer
+
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+  defaultDashboardsEnabled: true
+
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      url: http://loki.monitoring.svc.cluster.local:3100
+      access: proxy
+
+  grafana.ini:
+    server:
+      root_url: "%(protocol)s://%(domain)s/"
+    auth.anonymous:
+      enabled: false
+
+alertmanager:
+  enabled: true
+
+  alertmanagerSpec:
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "50m"
+      limits:
+        memory: "128Mi"
+        cpu: "100m"
+
+nodeExporter:
+  enabled: true
+
+kubeStateMetrics:
+  enabled: true

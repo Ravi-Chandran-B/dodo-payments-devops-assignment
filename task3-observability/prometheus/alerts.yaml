@@ -1,0 +1,106 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: dodo-payments-alerts
+  namespace: monitoring
+  labels:
+    app: kube-prometheus-stack
+    release: monitoring
+spec:
+  groups:
+
+    - name: pod-alerts
+      rules:
+
+        - alert: PodCrashLooping
+          expr: rate(kube_pod_container_status_restarts_total{namespace="dodo-payments"}[5m]) > 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Pod {{ $labels.pod }} is crash looping"
+            description: "Pod {{ $labels.pod }} has restarted more than once in 5 minutes"
+
+        - alert: PodNotReady
+          expr: kube_pod_status_ready{namespace="dodo-payments", condition="true"} == 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Pod {{ $labels.pod }} is not ready"
+            description: "Pod {{ $labels.pod }} has been not ready for 5 minutes"
+
+        - alert: PodPendingTooLong
+          expr: kube_pod_status_phase{namespace="dodo-payments", phase="Pending"} == 1
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Pod {{ $labels.pod }} stuck in Pending"
+            description: "Pod has been in Pending state for more than 10 minutes"
+
+    - name: resource-alerts
+      rules:
+
+        - alert: HighCPUUsage
+          expr: |
+            sum(rate(container_cpu_usage_seconds_total{namespace="dodo-payments"}[5m]))
+            by (pod) > 0.8
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High CPU usage in pod {{ $labels.pod }}"
+            description: "CPU usage is above 80% for 5 minutes"
+
+        - alert: HighMemoryUsage
+          expr: |
+            sum(container_memory_usage_bytes{namespace="dodo-payments"})
+            by (pod) / sum(kube_pod_container_resource_limits{resource="memory", namespace="dodo-payments"})
+            by (pod) > 0.85
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High memory usage in pod {{ $labels.pod }}"
+            description: "Memory usage is above 85% for 5 minutes"
+
+    - name: deployment-alerts
+      rules:
+
+        - alert: DeploymentReplicasMismatch
+          expr: |
+            kube_deployment_spec_replicas{namespace="dodo-payments"}
+            != kube_deployment_status_available_replicas{namespace="dodo-payments"}
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Deployment {{ $labels.deployment }} has replica mismatch"
+            description: "Deployment does not have the expected number of replicas"
+
+    - name: slo-alerts
+      rules:
+
+        - alert: HighErrorRate
+          expr: |
+            sum(rate(http_requests_total{job="dodo-backend", status=~"5.."}[5m]))
+            / sum(rate(http_requests_total{job="dodo-backend"}[5m])) > 0.05
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "High error rate detected"
+            description: "Error rate is above 5% - SLO breach!"
+
+        - alert: HighLatency
+          expr: |
+            histogram_quantile(0.99,
+              sum(rate(http_request_duration_seconds_bucket{job="dodo-backend"}[5m]))
+              by (le)) > 1
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High latency detected"
+            description: "P99 latency is above 1 second"
