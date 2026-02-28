@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: 143684031953.dkr.ecr.us-east-1.amazonaws.com/infra-eks-dev-frontend:latest
+          image: public.ecr.aws/dodo/frontend:latest
           ports:
             - containerPort: 80
 
