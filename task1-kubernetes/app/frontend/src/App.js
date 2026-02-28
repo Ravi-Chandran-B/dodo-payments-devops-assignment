@@ -7,7 +7,8 @@ function App() {
   const [status, setStatus] = useState('pending');
   const [message, setMessage] = useState('');
 
-  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
+  const API_URL = process.env.REACT_APP_API_URL || 
+  'http://a9c67088756204b3ab0f6477e2e150df-932926263.us-east-1.elb.amazonaws.com';
 
   useEffect(() => {
     fetchPayments();
