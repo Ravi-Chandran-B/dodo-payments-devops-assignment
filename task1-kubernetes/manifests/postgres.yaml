@@ -21,7 +21,6 @@ spec:
           image: postgres:15-alpine
           ports:
             - containerPort: 5432
-
           resources:
             requests:
               memory: "128Mi"
@@ -29,54 +28,43 @@ spec:
             limits:
               memory: "256Mi"
               cpu: "200m"
-
           env:
             - name: POSTGRES_DB
-              valueFrom:
-                secretKeyRef:
-                  name: app-secret
-                  key: POSTGRES_DB
+              value: dododb
             - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: app-secret
-                  key: POSTGRES_USER
+              value: dodoadmin
             - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: app-secret
-                  key: POSTGRES_PASSWORD
-
+              value: dodopassword123
           livenessProbe:
             exec:
               command:
                 - pg_isready
                 - -U
-                - $(POSTGRES_USER)
+                - dodoadmin
+                - -d
+                - dododb
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
-
           readinessProbe:
             exec:
               command:
                 - pg_isready
                 - -U
-                - $(POSTGRES_USER)
+                - dodoadmin
+                - -d
+                - dododb
             initialDelaySeconds: 5
             periodSeconds: 5
             timeoutSeconds: 3
             failureThreshold: 3
-
           volumeMounts:
             - name: postgres-data
               mountPath: /var/lib/postgresql/data
-
       volumes:
         - name: postgres-data
           emptyDir: {}
-
 ---
 apiVersion: v1
 kind: Service
