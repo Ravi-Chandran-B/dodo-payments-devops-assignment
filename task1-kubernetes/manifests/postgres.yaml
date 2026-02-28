@@ -52,7 +52,9 @@ spec:
               command:
                 - pg_isready
                 - -U
-                - $(POSTGRES_USER)
+                - dodoadmin
+                - -d
+                - dododb
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
@@ -63,7 +65,9 @@ spec:
               command:
                 - pg_isready
                 - -U
-                - $(POSTGRES_USER)
+                - dodoadmin
+                - -d
+                - dododb
             initialDelaySeconds: 5
             periodSeconds: 5
             timeoutSeconds: 3
@@ -93,3 +97,4 @@ spec:
       port: 5432
       targetPort: 5432
   type: ClusterIP
+  
