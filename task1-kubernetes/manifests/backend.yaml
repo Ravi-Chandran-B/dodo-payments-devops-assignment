@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: public.ecr.aws/dodo/backend:latest
+          image: 143684031953.dkr.ecr.us-east-1.amazonaws.com/infra-eks-dev-backend:latest
           ports:
             - containerPort: 3000
 

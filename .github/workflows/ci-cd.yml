@@ -182,9 +182,9 @@ jobs:
       - name: Wait for rollout
         run: |
           kubectl rollout status deployment/backend \
-            -n dodo-payments --timeout=120s
+            -n dodo-payments --timeout=300s
           kubectl rollout status deployment/frontend \
-            -n dodo-payments --timeout=120s
+            -n dodo-payments --timeout=300s
 
 
       - name: Rollback on failure
