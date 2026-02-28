@@ -1,10 +1,3 @@
-# ─── POD SECURITY STANDARDS ──────────────────────────────────────────────
-# Enforce security policies on all pods
-# Prevent privileged containers
-# Enforce read-only filesystem
-# Restrict host access
-
-# ─── NAMESPACE LABELS FOR PSS ────────────────────────────────────────────
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -12,14 +5,11 @@ metadata:
   labels:
     name: dodo-payments
     environment: dev
-    # Enforce restricted pod security standard
     pod-security.kubernetes.io/enforce: restricted
     pod-security.kubernetes.io/warn: restricted
     pod-security.kubernetes.io/audit: restricted
 
 ---
-# ─── OPA GATEKEEPER CONSTRAINT TEMPLATE ─────────────────────────────────
-# Prevent privileged containers
 apiVersion: templates.gatekeeper.sh/v1
 kind: ConstraintTemplate
 metadata:
@@ -47,7 +37,6 @@ spec:
         }
 
 ---
-# ─── CONSTRAINT: NO PRIVILEGED CONTAINERS ────────────────────────────────
 apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: K8sPSPPrivilegedContainer
 metadata:
@@ -61,7 +50,6 @@ spec:
       - dodo-payments
 
 ---
-# ─── OPA CONSTRAINT TEMPLATE: READ ONLY ROOT ─────────────────────────────
 apiVersion: templates.gatekeeper.sh/v1
 kind: ConstraintTemplate
 metadata:
@@ -83,7 +71,6 @@ spec:
         }
 
 ---
-# ─── CONSTRAINT: READ ONLY ROOT FILESYSTEM ───────────────────────────────
 apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: K8sPSPReadOnlyRootFilesystem
 metadata:
