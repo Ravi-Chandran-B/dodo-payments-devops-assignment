@@ -42,6 +42,7 @@ resource "aws_instance" "bastion" {
   vpc_security_group_ids      = [aws_security_group.bastion.id]
   key_name                    = aws_key_pair.bastion.key_name
   associate_public_ip_address = true
+  iam_instance_profile        = aws_iam_instance_profile.bastion.name
 
   user_data = <<-EOF
     #!/bin/bash

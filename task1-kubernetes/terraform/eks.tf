@@ -135,3 +135,25 @@ resource "aws_eks_node_group" "main" {
     Environment = var.environment
   }
 }
+
+# Grant EKS access to bastion host IAM role
+resource "aws_eks_access_entry" "bastion" {
+  cluster_name      = aws_eks_cluster.main.name
+  principal_arn     = aws_iam_role.bastion.arn
+  type              = "EC2_LINUX"
+
+  tags = {
+    Name        = "${var.cluster_name}-bastion-access"
+    Environment = var.environment
+  }
+}
+
+# Associate admin policy to bastion access entry
+resource "aws_eks_access_policy_association" "bastion_admin" {
+  cluster_name       = aws_eks_cluster.main.name
+  policy_arn         = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+  principal_arn      = aws_iam_role.bastion.arn
+  access_scope {
+    type = "cluster"
+  }
+}
