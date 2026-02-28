@@ -1,9 +1,11 @@
 const express = require('express');
+const cors = require('cors');
 const { Pool } = require('pg');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 const pool = new Pool({
