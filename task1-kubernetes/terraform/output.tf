@@ -53,6 +53,11 @@ output "bastion_public_ip" {
   value       = aws_instance.bastion.public_ip
 }
 
+output "bastion_role_arn" {
+  description = "ARN of the bastion IAM role (used for kubectl access)"
+  value       = aws_iam_role.bastion.arn
+}
+
 output "bastion_ssh_command" {
   description = "SSH command to connect to bastion"
   value       = "ssh -i ~/.ssh/id_rsa ec2-user@${aws_instance.bastion.public_ip}"

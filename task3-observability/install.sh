@@ -4,12 +4,12 @@ set -e
 echo "Installing Observability Stack..."
 
 kubectl create namespace monitoring --dry-run=client -o yaml | kubectl apply -f -
-echo "✅ Namespace created"
+echo "Namespace created"
 
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
-echo "✅ Helm repos added"
+echo "Helm repos added"
 
 echo "Installing Prometheus + Grafana..."
 helm install monitoring prometheus-community/kube-prometheus-stack \
@@ -17,7 +17,7 @@ helm install monitoring prometheus-community/kube-prometheus-stack \
   --values prometheus/values.yaml \
   --wait \
   --timeout 10m
-echo "✅ Prometheus + Grafana installed"
+echo "Prometheus + Grafana installed"
 
 echo "Installing Loki + Promtail..."
 helm install loki grafana/loki-stack \
@@ -25,15 +25,15 @@ helm install loki grafana/loki-stack \
   --values loki/values.yaml \
   --wait \
   --timeout 5m
-echo "✅ Loki + Promtail installed"
+echo "Loki + Promtail installed"
 
 echo "Installing Jaeger..."
 kubectl apply -f jaeger/jaeger.yaml
-echo "✅ Jaeger installed"
+echo "Jaeger installed"
 
 echo "Applying alert rules..."
 kubectl apply -f prometheus/alerts.yaml
-echo "✅ Alert rules applied"
+echo "Alert rules applied"
 
 echo "Waiting for pods to be ready..."
 kubectl wait --for=condition=available deployment/monitoring-grafana \
@@ -41,7 +41,7 @@ kubectl wait --for=condition=available deployment/monitoring-grafana \
 
 echo ""
 echo "========================================"
-echo "✅ Observability Stack Ready!"
+echo "Observability Stack Ready!"
 echo "========================================"
 
 GRAFANA_URL=$(kubectl get svc monitoring-grafana -n monitoring \

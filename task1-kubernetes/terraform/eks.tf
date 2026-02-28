@@ -109,9 +109,9 @@ resource "aws_eks_node_group" "main" {
   instance_types = ["t3.micro"]
 
   scaling_config {
-    desired_size = 1
-    min_size     = 1
-    max_size     = 2
+    desired_size = 3
+    min_size     = 2
+    max_size     = 4
   }
 
   update_config {
@@ -136,24 +136,8 @@ resource "aws_eks_node_group" "main" {
   }
 }
 
-# Grant EKS access to bastion host IAM role
-resource "aws_eks_access_entry" "bastion" {
-  cluster_name      = aws_eks_cluster.main.name
-  principal_arn     = aws_iam_role.bastion.arn
-  type              = "EC2_LINUX"
-
-  tags = {
-    Name        = "${var.cluster_name}-bastion-access"
-    Environment = var.environment
-  }
-}
-
-# Associate admin policy to bastion access entry
-resource "aws_eks_access_policy_association" "bastion_admin" {
-  cluster_name       = aws_eks_cluster.main.name
-  policy_arn         = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-  principal_arn      = aws_iam_role.bastion.arn
-  access_scope {
-    type = "cluster"
-  }
-}
+# Bastion access entries and policy associations removed because authentication
+# will be managed via the aws-auth ConfigMap.  These resources require the
+# cluster authentication mode to support API_AND_CONFIG_MAP, which may not be
+# available and are unnecessary when the bastion role is mapped to
+# system:masters in aws-auth.
