@@ -47,6 +47,6 @@ resource "kubernetes_config_map_v1" "aws_auth" {
     # prevent terraform from trying to destroy the map if the cluster is
     # deleted externally; generally the map should be managed by this
     # configuration only.
-    prevent_destroy = true
+    prevent_destroy = false
   }
 }
