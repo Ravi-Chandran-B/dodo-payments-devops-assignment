@@ -1,0 +1,97 @@
+# ─── POD SECURITY STANDARDS ──────────────────────────────────────────────
+# Enforce security policies on all pods
+# Prevent privileged containers
+# Enforce read-only filesystem
+# Restrict host access
+
+# ─── NAMESPACE LABELS FOR PSS ────────────────────────────────────────────
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dodo-payments
+  labels:
+    name: dodo-payments
+    environment: dev
+    # Enforce restricted pod security standard
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted
+
+---
+# ─── OPA GATEKEEPER CONSTRAINT TEMPLATE ─────────────────────────────────
+# Prevent privileged containers
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8spspprivilegedcontainer
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sPSPPrivilegedContainer
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8spspprivileged
+
+        violation[{"msg": msg}] {
+          container := input.review.object.spec.containers[_]
+          container.securityContext.privileged == true
+          msg := sprintf("Privileged container is not allowed: %v", [container.name])
+        }
+
+        violation[{"msg": msg}] {
+          container := input.review.object.spec.initContainers[_]
+          container.securityContext.privileged == true
+          msg := sprintf("Privileged init container is not allowed: %v", [container.name])
+        }
+
+---
+# ─── CONSTRAINT: NO PRIVILEGED CONTAINERS ────────────────────────────────
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sPSPPrivilegedContainer
+metadata:
+  name: psp-deny-privileged
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+    namespaces:
+      - dodo-payments
+
+---
+# ─── OPA CONSTRAINT TEMPLATE: READ ONLY ROOT ─────────────────────────────
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8spspreadonlyrootfilesystem
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sPSPReadOnlyRootFilesystem
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8spspreadonlyrootfilesystem
+
+        violation[{"msg": msg}] {
+          container := input.review.object.spec.containers[_]
+          not container.securityContext.readOnlyRootFilesystem == true
+          msg := sprintf("Container must use read-only root filesystem: %v", [container.name])
+        }
+
+---
+# ─── CONSTRAINT: READ ONLY ROOT FILESYSTEM ───────────────────────────────
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sPSPReadOnlyRootFilesystem
+metadata:
+  name: psp-readonly-root
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+    namespaces:
+      - dodo-payments
