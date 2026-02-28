@@ -22,11 +22,3 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 
 # Start app
 CMD ["node", "app.js"]
-```
-
----
-Create at `task1-kubernetes/app/backend/.dockerignore`
-```
-node_modules
-npm-debug.log
-.env

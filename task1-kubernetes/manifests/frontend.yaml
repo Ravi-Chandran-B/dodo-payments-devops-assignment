@@ -6,7 +6,7 @@ metadata:
   labels:
     app: frontend
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: frontend
@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: YOUR_ECR_URL/dodo-payments-cluster-frontend:latest
+          image: 143684031953.dkr.ecr.us-east-1.amazonaws.com/infra-eks-dev-frontend:latest
           ports:
             - containerPort: 80
 

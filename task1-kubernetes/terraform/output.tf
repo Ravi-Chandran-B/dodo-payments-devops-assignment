@@ -42,17 +42,6 @@ output "ecr_postgres_url" {
   description = "ECR postgres repository URL"
   value       = aws_ecr_repository.dev-postgres.repository_url
 }
-    
-output "github_actions_access_key" {
-  description = "GitHub Actions IAM access key"
-  value       = aws_iam_access_key.github_actions.id
-}
-
-output "github_actions_secret_key" {
-  description = "GitHub Actions IAM secret key"
-  value       = aws_iam_access_key.github_actions.secret
-  sensitive   = true
-}
 
 output "kubectl_config_command" {
   description = "Command to configure kubectl"
