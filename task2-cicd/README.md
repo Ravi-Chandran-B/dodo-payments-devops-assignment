@@ -1,8 +1,8 @@
-\# Task 2: CI/CD Pipeline
+Task 2: CI/CD Pipeline
 
 
 
-\## Overview
+# Overview
 
 
 
@@ -14,7 +14,7 @@ and automated Kubernetes deployment with rollback support.
 
 
 
-\## Pipeline Architecture
+# Pipeline Architecture
 
 
 
@@ -102,7 +102,7 @@ Developer pushes code
 
 
 
-\## Folder Structure
+# Folder Structure
 
 
 
@@ -132,11 +132,11 @@ task2-cicd/
 
 
 
-\## Pipeline Jobs Detail
+# Pipeline Jobs Detail
 
 
 
-\### Job 1: Lint and Test
+# Job 1: Lint and Test
 
 \- Runs on: every push + every PR
 
@@ -148,7 +148,7 @@ task2-cicd/
 
 
 
-\### Job 2: Security Scan
+# Job 2: Security Scan
 
 \- Runs after: Job 1 passes
 
@@ -160,7 +160,7 @@ task2-cicd/
 
 
 
-\### Job 3: Build and Push
+# Job 3: Build and Push
 
 \- Runs on: main branch only
 
@@ -172,7 +172,7 @@ task2-cicd/
 
 
 
-\### Job 4: Deploy
+# Job 4: Deploy
 
 \- Runs after: Job 3 completes
 
@@ -188,7 +188,7 @@ task2-cicd/
 
 
 
-\## GitOps with ArgoCD
+# GitOps with ArgoCD
 
 
 
@@ -220,7 +220,7 @@ Git push → ArgoCD detects change → applies to cluster → verifies sync
 
 
 
-\## GitHub Secrets Required
+# GitHub Secrets Required
 
 
 
@@ -242,7 +242,7 @@ Git push → ArgoCD detects change → applies to cluster → verifies sync
 
 
 
-\## Install ArgoCD
+# Install ArgoCD
 
 
 
@@ -270,7 +270,7 @@ This script:
 
 
 
-\## Rollback
+# Rollback
 
 
 
@@ -310,7 +310,7 @@ kubectl rollout undo deployment/backend --to-revision=2 -n dodo-payments
 
 
 
-\## Automated Changelog (Bonus)
+# Automated Changelog (Bonus)
 
 
 
@@ -327,22 +327,14 @@ See `screenshots/` folder for proof.
 
 
 | Screenshot | Description |
-
 |-----------|-------------|
-
 | task2-github-secrets.png | GitHub Screts |
-
 | task2-pipeline-running.png | Pipeline Running|
-
 | task2-pipeline-jobs.png | Pipeline Jobs |
-
 | task2-argocd-pods.png | Argocd pods |
-
 | task2-argocd-login.png | Argocd login |
-
 | task2-argocd-dashboard.png | Argocd Dashboard |
 | task2-argocd-app-synced.png | App synced |
-
 | task2-argocd-app-tree.png | App tree |
 | task2-argocd-full-tree.png | Argocd App Full Tree |
 | task2-pipeline-history.png | Pipeline History |
