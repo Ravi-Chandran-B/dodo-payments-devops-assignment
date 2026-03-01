@@ -31,10 +31,22 @@ spec:
           env:
             - name: POSTGRES_DB
               value: dododb
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: POSTGRES_DB
             - name: POSTGRES_USER
               value: dodoadmin
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
               value: dodopassword123
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: POSTGRES_PASSWORD
           livenessProbe:
             exec:
               command:
