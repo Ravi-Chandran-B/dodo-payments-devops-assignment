@@ -320,13 +320,31 @@ See `.github/workflows/ci-cd.yml` for changelog generation step.
 
 
 
-\## Bonus Tasks Completed
+\## Screenshots
+
+See `screenshots/` folder for proof.
 
 
 
-\- Security scanning with Trivy (source code + Docker images)
+| Screenshot | Description |
 
-\- Automated changelog generation
+|-----------|-------------|
 
+| task2-github-secrets.png | GitHub Screts |
 
+| task2-pipeline-running.png | Pipeline Running|
+
+| task2-pipeline-jobs.png | Pipeline Jobs |
+
+| task2-argocd-pods.png | Argocd pods |
+
+| task2-argocd-login.png | Argocd login |
+
+| task2-argocd-dashboard.png | Argocd Dashboard |
+| task2-argocd-app-synced.png | App synced |
+
+| task2-argocd-app-tree.png | App tree |
+| task2-argocd-full-tree.png | Argocd App Full Tree |
+| task2-pipeline-history.png | Pipeline History |
+| task2-pipeline-all-runs.png | Pipeline all Runs |
 
