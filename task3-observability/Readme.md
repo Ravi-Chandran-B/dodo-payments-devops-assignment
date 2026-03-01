@@ -151,8 +151,12 @@ See `screenshots/` folder for proof.
 
 | Screenshot | Description |
 |-----------|-------------|
-| task3-grafana.png | Grafana dashboard |
+| task3-grafana-dashboard.png | Grafana dashboard |
 | task3-prometheus.png | Prometheus targets |
 | task3-alerts.png | Alert rules |
-| task3-loki.png | Loki logs in Grafana |
+| task3-grafana-kubernetes-dashboards.png | Grafana Kubernetes Dashboard |
+| task3-grafana-namespace-pods.png | Grafana Pod name space |
+| task3-prometheus-overview.png | Prometgeus Overview |
+| task3-monitoring-services.png | Monitoring Service |
+| task3-grafana-alert-rules.png | Grafana Alerts |
 | task3-jaeger.png | Jaeger traces |
