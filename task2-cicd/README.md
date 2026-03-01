@@ -224,19 +224,12 @@ Git push → ArgoCD detects change → applies to cluster → verifies sync
 
 
 | Secret | Description |
-
 |--------|-------------|
-
 | `AWS\_ACCESS\_KEY\_ID` | AWS IAM access key |
-
 | `AWS\_SECRET\_ACCESS\_KEY` | AWS IAM secret key |
-
 | `AWS\_ACCOUNT\_ID` | AWS account number |
-
 | `DB\_USER` | PostgreSQL username |
-
 | `DB\_PASSWORD` | PostgreSQL password |
-
 | `POSTGRES\_DB` | PostgreSQL database name |
 
 
