@@ -327,22 +327,14 @@ See `screenshots/` folder for proof.
 
 
 | Screenshot | Description |
-
 |-----------|-------------|
-
 | task2-github-secrets.png | GitHub Screts |
-
 | task2-pipeline-running.png | Pipeline Running|
-
 | task2-pipeline-jobs.png | Pipeline Jobs |
-
 | task2-argocd-pods.png | Argocd pods |
-
 | task2-argocd-login.png | Argocd login |
-
 | task2-argocd-dashboard.png | Argocd Dashboard |
 | task2-argocd-app-synced.png | App synced |
-
 | task2-argocd-app-tree.png | App tree |
 | task2-argocd-full-tree.png | Argocd App Full Tree |
 | task2-pipeline-history.png | Pipeline History |
