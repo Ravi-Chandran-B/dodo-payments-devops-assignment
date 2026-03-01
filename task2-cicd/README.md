@@ -1,7 +1,6 @@
 Task 2: CI/CD Pipeline
 
 
-
 # Overview
 
 
