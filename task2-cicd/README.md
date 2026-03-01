@@ -1,4 +1,4 @@
-# Task 2: CI/CD Pipeline
+## Task 2: CI/CD Pipeline
 
 
 # Overview
