@@ -323,6 +323,7 @@ See `screenshots/` folder for proof.
 | task2-github-secrets.png | GitHub Screts |
 | task2-pipeline-running.png | Pipeline Running|
 | task2-pipeline-jobs.png | Pipeline Jobs |
+| task2-pipeline-success.png | Pipeline success |
 | task2-argocd-pods.png | Argocd pods |
 | task2-argocd-login.png | Argocd login |
 | task2-argocd-dashboard.png | Argocd Dashboard |
