@@ -151,7 +151,7 @@ See `screenshots/` folder for proof.
 
 | Screenshot | Description |
 |-----------|-------------|
-| task3-grafana.png | Grafana dashboard |
+| task3-grafana-dashboard.png | Grafana dashboard |
 | task3-prometheus.png | Prometheus targets |
 | task3-alerts.png | Alert rules |
 | task3-grafana-kubernetes-dashboards.png | Grafana Kubernetes Dashboard |
