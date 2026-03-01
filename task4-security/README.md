@@ -175,7 +175,7 @@ See `screenshots/` folder for proof.
 
 | Screenshot | Description |
 |-----------|-------------|
-| task4-rbac.png | RBAC roles listed |
+| task4-rbac-role.png | RBAC roles listed |
 | task4-network-policies.png | Network policies listed |
-| task4-sealed-secrets.png | Sealed secrets listed |
-| task4-opa.png | OPA constraints listed |
+| task4-rolebindings.png | Rolebindings listed|
+| task4-serviceaccounts.png | Service Accounts listed|
