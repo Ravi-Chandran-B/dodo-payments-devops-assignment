@@ -114,7 +114,7 @@ dodo-payments-devops-assignment/
 | Resource | Cost/hour |
 |----------|-----------|
 | EKS Cluster | $0.10 |
-| 3x t3.medium nodes | $0.125 |
+| 3x t3.medium nodes | $0.042 |
 | NAT Gateway | $0.045 |
 | Load Balancers | ~$0.02 |
 | **Total** | **~$0.29/hour** |
@@ -146,4 +146,5 @@ cd task4-security && bash install.sh
 
 Screenshots of all working deployments are included in each task folder
 under `screenshots/`.
+
 
