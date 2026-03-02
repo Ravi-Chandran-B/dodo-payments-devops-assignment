@@ -89,11 +89,11 @@ dodo-payments-devops-assignment/
 
 | Task | Description | Status | Bonus |
 |------|-------------|--------|-------|
-| [Task 1](./task1-kubernetes/README.md) | Kubernetes + Microservices on EKS | ✅ Complete | 2/3 |
-| [Task 2](./task2-cicd/README.md) | GitHub Actions + ArgoCD GitOps | ✅ Complete | 2/3 |
-| [Task 3](./task3-observability/README.md) | Prometheus + Grafana + Loki + Jaeger | ✅ Complete | 2/3 |
-| [Task 4](./task4-security/README.md) | RBAC + Network Policies + OPA | ✅ Complete | 0/3 |
-| [Task 5](./task5-istio/README.md) | Istio Knowledge Assessment | ✅ Complete | - |
+| [Task 1](./task1-kubernetes/README.md) | Kubernetes + Microservices on EKS | Complete | 2/3 |
+| [Task 2](./task2-cicd/README.md) | GitHub Actions + ArgoCD GitOps | Complete | 2/3 |
+| [Task 3](./task3-observability/README.md) | Prometheus + Grafana + Loki + Jaeger | Complete | 2/3 |
+| [Task 4](./task4-security/README.md) | RBAC + Network Policies + OPA | Complete | 0/3 |
+| [Task 5](./task5-istio/README.md) | Istio Knowledge Assessment | Complete | - |
 
 ## Infrastructure Details
 
@@ -146,3 +146,4 @@ cd task4-security && bash install.sh
 
 Screenshots of all working deployments are included in each task folder
 under `screenshots/`.
+
