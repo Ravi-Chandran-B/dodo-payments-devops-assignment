@@ -4,8 +4,8 @@
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│                  Observability Stack                 │
-│                                                      │
+│                  Observability Stack                │
+│                                                     │
 │  Prometheus → collects metrics from all pods        │
 │  Grafana    → visualizes metrics + logs             │
 │  Loki       → stores and queries logs               │
