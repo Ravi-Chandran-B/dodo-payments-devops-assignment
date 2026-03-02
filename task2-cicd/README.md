@@ -312,7 +312,7 @@ See `.github/workflows/ci-cd.yml` for changelog generation step.
 
 
 
-\## Screenshots
+## Screenshots
 
 See `screenshots/` folder for proof.
 
